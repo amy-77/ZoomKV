@@ -1,0 +1,23 @@
+# Core runtime
+torch>=2.5
+transformers>=4.45
+accelerate
+datasets
+huggingface-hub
+sentencepiece
+tokenizers
+
+# CUDA extension build/runtime
+ninja
+triton
+flash-attn
+flashinfer-python
+cuda-python
+
+# Utilities
+numpy
+scipy
+tqdm
+PyYAML
+termcolor
+matplotlib
