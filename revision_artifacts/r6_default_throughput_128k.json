@@ -1,0 +1,113 @@
+{
+  "date": "2026-10-08",
+  "hardware": "1x NVIDIA A100 80GB",
+  "model": "Qwen3-4B-Thinking-2507",
+  "protocol": {
+    "context_tokens": 131072,
+    "batch_size": 1,
+    "decode_warmup_tokens": 32,
+    "timed_decode_tokens": 128,
+    "repetitions": 3,
+    "ttft_definition": "prefill plus method-specific cache construction or transfer required before decode",
+    "variation": "sample standard deviation across independent repetitions"
+  },
+  "methods": {
+    "ZoomKV": {
+      "configuration": {
+        "final_topk": 100,
+        "sink": 64,
+        "local": 256,
+        "update_interval": 256,
+        "parent_ratio": 0.4,
+        "child_ratio": 0.3
+      },
+      "implementation": "validated_cache.polar_cache",
+      "correctness_fix": "flush at the next layer-0 boundary after all layers have filled the update buffer",
+      "ttft_s_runs": [47.961116, 49.473401, 47.328401],
+      "tpot_ms_runs": [22.078111, 22.549359, 22.001543],
+      "ttft_s_mean": 48.254306,
+      "ttft_s_sample_std": 1.102146,
+      "tpot_ms_mean": 22.209671,
+      "tpot_ms_sample_std": 0.296659,
+      "decode_tokens_per_s": 45.025430
+    },
+    "ParisKV": {
+      "configuration": {
+        "final_topk": 100,
+        "sink": 4,
+        "local": 512,
+        "update_interval": 512,
+        "collision_ratio": 0.2,
+        "candidate_ratio": 0.12,
+        "enable_offload": true
+      },
+      "ttft_s_runs": [45.519885, 46.326898, 46.382493],
+      "tpot_ms_runs": [31.528449, 31.395347, 30.946792],
+      "ttft_s_mean": 46.076425,
+      "ttft_s_sample_std": 0.482779,
+      "tpot_ms_mean": 31.290196,
+      "tpot_ms_sample_std": 0.304752,
+      "decode_tokens_per_s": 31.958892
+    },
+    "FreeKV": {
+      "configuration": {
+        "total_budget": 2048,
+        "sink": 128,
+        "local": 128,
+        "dynamic_retrieval": 1792,
+        "page_size": 32,
+        "page_rep": "quest",
+        "gqa_policy": "avgSM",
+        "layer_0": "dense"
+      },
+      "ttft_s_runs": [33.7146, 33.9880, 34.0983],
+      "tpot_ms_runs": [113.09, 113.68, 113.12],
+      "ttft_s_mean": 33.933633,
+      "ttft_s_sample_std": 0.197543,
+      "tpot_ms_mean": 113.296667,
+      "tpot_ms_sample_std": 0.332315,
+      "decode_tokens_per_s": 8.826385
+    },
+    "ShadowKV": {
+      "configuration": {
+        "sparse_budget": 2048,
+        "rank": 160,
+        "chunk_size": 8,
+        "local_tokens": 32
+      },
+      "environment": "shawdowkv",
+      "kernel": "ShadowKV/kernels/shadowkv.cpython-310-x86_64-linux-gnu.so",
+      "prefill_s_runs": [53.8439, 55.4792, 54.1440],
+      "h2d_s_runs": [1.2920, 1.3113, 1.3770],
+      "ttft_s_runs": [55.1359, 56.7905, 55.5210],
+      "tpot_ms_runs": [26.205, 26.217, 26.500],
+      "ttft_s_mean": 55.815800,
+      "ttft_s_sample_std": 0.865798,
+      "tpot_ms_mean": 26.307333,
+      "tpot_ms_sample_std": 0.166962,
+      "decode_tokens_per_s": 38.012215
+    },
+    "RetroInfer": {
+      "configuration": {
+        "retrieval_budget_ratio": 0.018,
+        "estimate_ratio": 0.232,
+        "sink": 4,
+        "local": 64,
+        "cluster_size_target": 16,
+        "centroids": 8192,
+        "nprobe": 147,
+        "segments": 16
+      },
+      "environment": "retroinfer",
+      "compatibility_fix": "64-bit address offsets in the Triton reverse-index kernel at 128K; algorithm and operating parameters unchanged",
+      "input_note": "The selected RULER row tokenized to 130896 tokens and was deterministically extended by 176 tokens to exactly 131072.",
+      "ttft_s_runs": [44.949319, 45.055031, 44.185462],
+      "tpot_ms_runs": [43.812647, 46.401212, 39.382469],
+      "ttft_s_mean": 44.729937,
+      "ttft_s_sample_std": 0.474483,
+      "tpot_ms_mean": 43.198776,
+      "tpot_ms_sample_std": 3.549411,
+      "decode_tokens_per_s": 23.148804
+    }
+  }
+}
